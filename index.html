@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Coinpuch Leather Folder - 4/5 Review</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root {
+    --bg: #140b06;
+    --panel: #22130b;
+    --tan: #b5612a;
+    --tan-light: #d9893a;
+    --gold: #f5b942;
+    --text: #f6e7d6;
+    --muted: #c9a88a;
+    --line: rgba(245, 185, 66, 0.22);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 30% 20%, #3a1e0e 0%, var(--bg) 60%) fixed, var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  #stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 24px;
+    background: radial-gradient(circle at 50% 35%, rgba(217, 137, 58, 0.25), transparent 65%);
+    cursor: grab;
+    overflow: hidden;
+  }
+  #stage:active { cursor: grabbing; }
+  #stage canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+  .hint {
+    position: absolute; bottom: 12px; left: 0; right: 0;
+    text-align: center; font-size: 13px; color: var(--muted); pointer-events: none;
+  }
+  .views { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+  .views button {
+    font: inherit; font-size: 14px; color: var(--text);
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 14px; cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .views button:hover { border-color: var(--gold); }
+  .views button[aria-pressed="true"] { background: var(--tan); color: #fff; border-color: var(--tan); }
+  #caption { text-align: center; font-size: 14px; color: var(--muted); margin-top: 10px; min-height: 1.4em; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 12px; color: var(--tan-light); }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+    margin: 10px 0 14px;
+  }
+  .stars { display: flex; gap: 4px; font-size: 28px; color: var(--gold); }
+  .stars .off { color: #5a4636; }
+  .score { font-size: 15px; color: var(--muted); margin: 6px 0 20px; }
+  .score b { color: var(--gold); font-size: 22px; }
+  p.review { margin-bottom: 20px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 22px 0; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
+  .box h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--tan-light); margin-bottom: 8px; }
+  .box ul { list-style: none; font-size: 15px; color: var(--muted); }
+  .box li { margin: 6px 0; padding-left: 18px; position: relative; }
+  .box li::before { content: "\2713"; position: absolute; left: 0; color: var(--gold); }
+  .box.con li::before { content: "\2013"; color: #c98a7a; }
+  .bars { margin: 22px 0; }
+  .bar {
+    display: grid; grid-template-columns: 120px 1fr 36px; align-items: center;
+    gap: 12px; font-size: 14px; color: var(--muted); margin: 10px 0;
+  }
+  .track { height: 8px; background: #3a2416; border-radius: 99px; overflow: hidden; }
+  .fill {
+    height: 100%; width: 0; border-radius: 99px;
+    background: linear-gradient(90deg, var(--tan), var(--gold));
+    transition: width 1.2s ease;
+  }
+  .sign { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .sign .name { font-family: Georgia, serif; font-size: 20px; color: var(--gold); }
+  .sign small { color: var(--muted); }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .cols { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section>
+    <div id="stage"><div class="hint">Drag to rotate &middot; double-click to open</div></div>
+    <div class="views" role="group" aria-label="Product views">
+      <button data-view="front" aria-pressed="true">Front</button>
+      <button data-view="back" aria-pressed="false">Back</button>
+      <button data-view="left" aria-pressed="false">Left side</button>
+      <button data-view="right" aria-pressed="false">Right side</button>
+      <button data-view="top" aria-pressed="false">Top</button>
+      <button data-view="surround" aria-pressed="false">Surround</button>
+      <button data-view="inside" aria-pressed="false">Inside</button>
+    </div>
+    <div id="caption"></div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Product Review &middot; Verified Buyer</div>
+    <h1>Coinpuch Premium Tan Leather Document Folder</h1>
+    <div class="stars" aria-label="4 out of 5 stars">
+      <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span class="off">&#9733;</span>
+    </div>
+    <div class="score"><b>4.0</b> / 5 overall rating</div>
+
+    <p class="review">
+      I ordered this folder online and I'm happy with it. The warm tan finish looks premium and the stitching is neat.
+      A full zip runs around the edges so my papers stay secure, and the inside is well organized: several card slots,
+      a clear ID window, a zip pocket for important documents, a snap-closed pocket, and a ring binder section where my
+      CV sits neatly in a clear sleeve. The handle on top is handy for carrying, but it's the one part I'd change.
+      It's a good choice for students and job seekers who want to look professional. I'm giving it 4 stars instead of 5
+      mainly because of the handle.
+    </p>
+
+    <div class="cols">
+      <div class="box">
+        <h3>What I liked</h3>
+        <ul>
+          <li>Warm tan finish with neat stitching</li>
+          <li>Full zip closure on three sides</li>
+          <li>Card slots, ID window and zip pocket</li>
+          <li>Ring binder keeps the CV in clear sleeves</li>
+        </ul>
+      </div>
+      <div class="box con">
+        <h3>What could be better</h3>
+        <ul>
+          <li>The handle should be made of something else instead of rubber</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bars">
+      <div class="bar"><span>Design</span><div class="track"><div class="fill" data-w="80%"></div></div><span>4/5</span></div>
+      <div class="bar"><span>Build quality</span><div class="track"><div class="fill" data-w="80%"></div></div><span>4/5</span></div>
+      <div class="bar"><span>Organization</span><div class="track"><div class="fill" data-w="100%"></div></div><span>5/5</span></div>
+      <div class="bar"><span>Value</span><div class="track"><div class="fill" data-w="80%"></div></div><span>4/5</span></div>
+    </div>
+
+    <div class="sign">
+      <div class="name">Md. Alfaz Nawaz Khan Shrabon</div>
+      <small>Verified buyer &middot; Reviewed November 16, 2026</small>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  const stage = document.getElementById('stage');
+  const caption = document.getElementById('caption');
+  const buttons = document.querySelectorAll('.views button');
+
+  if (!window.THREE) {
+    stage.innerHTML = '<p style="padding:24px;text-align:center;color:#c9a88a">The 3D view needs an internet connection to load Three.js.</p>';
+    return;
+  }
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+  camera.position.set(0, 0.2, 9.2);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  stage.insertBefore(renderer.domElement, stage.firstChild);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffe9d2, 0.55));
+  const key = new THREE.DirectionalLight(0xfff1dc, 1.2);
+  key.position.set(3, 5, 6);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffb36b, 0.5);
+  fill.position.set(-5, -2, 3);
+  scene.add(fill);
+  const rim = new THREE.PointLight(0xffc27a, 1.0, 30);
+  rim.position.set(0, 3, -4);
+  scene.add(rim);
+
+  // Materials
+  const leather = new THREE.MeshStandardMaterial({ color: 0xb5612a, roughness: 0.6, metalness: 0.02 });
+  const leatherDark = new THREE.MeshStandardMaterial({ color: 0x8a4420, roughness: 0.7 });
+  const metal = new THREE.MeshStandardMaterial({ color: 0xd0d4da, metalness: 0.9, roughness: 0.2 });
+  const zipMat = new THREE.MeshStandardMaterial({ color: 0x1d1d1d, metalness: 0.6, roughness: 0.35 });
+  const goldMat = new THREE.MeshStandardMaterial({ color: 0xf5b942, metalness: 0.8, roughness: 0.25, emissive: 0x3a2400, emissiveIntensity: 0.3 });
+  const emptyMat = new THREE.MeshStandardMaterial({ color: 0x4a3626, roughness: 0.6 });
+  const sleeveMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.18, roughness: 0.1 });
+
+  // Textures
+  const cardCanvas = document.createElement('canvas');
+  cardCanvas.width = 512; cardCanvas.height = 330;
+  const cc = cardCanvas.getContext('2d');
+  cc.fillStyle = '#ffffff';
+  cc.fillRect(0, 0, 512, 330);
+  cc.fillStyle = '#b5612a';
+  cc.fillRect(0, 0, 512, 96);
+  cc.textAlign = 'center';
+  cc.textBaseline = 'middle';
+  cc.fillStyle = '#f5b942';
+  cc.font = 'bold 56px Georgia, serif';
+  cc.fillText('COINPUCH', 256, 50);
+  cc.fillStyle = '#5a3a22';
+  cc.font = '26px Georgia, serif';
+  cc.fillText('PREMIUM LEATHER GOODS', 256, 160);
+  cc.fillStyle = '#b5612a';
+  cc.font = 'bold 30px system-ui, sans-serif';
+  cc.fillText('4 / 5  Verified Review', 256, 250);
+  cc.fillStyle = '#777777';
+  cc.font = '22px system-ui, sans-serif';
+  cc.fillText('Md. Alfaz Nawaz Khan Shrabon', 256, 295);
+  const cardTex = new THREE.CanvasTexture(cardCanvas);
+
+  const cvCanvas = document.createElement('canvas');
+  cvCanvas.width = 400; cvCanvas.height = 540;
+  const c2 = cvCanvas.getContext('2d');
+  c2.fillStyle = '#fdfdfb';
+  c2.fillRect(0, 0, 400, 540);
+  c2.fillStyle = '#222222';
+  c2.textAlign = 'center';
+  c2.font = 'bold 26px Georgia, serif';
+  c2.fillText('Aspiring Data Analyst', 200, 50);
+  c2.font = '18px Georgia, serif';
+  c2.fillText('Md. Alfaz Nawaz Khan Shrabon', 200, 82);
+  c2.fillStyle = '#999999';
+  c2.fillRect(40, 100, 320, 2);
+  c2.textAlign = 'left';
+  const cvSections = [
+    ['Professional Summary', ['Detail-oriented aspiring Data Analyst', 'Python, SQL, Excel and Power BI']],
+    ['Skills', ['Python: NumPy, Pandas, Matplotlib, Seaborn', 'Excel, SQL, Power BI, data cleaning']],
+    ['Projects', ['BMW Sales Data Analysis', 'Spotify Data Analysis', 'Zara Sales EDA']],
+    ['Education', ['Diploma in Engineering, Rajshahi Govt. Polytechnic', 'SSC, Gopalpur High School']]
+  ];
+  let cy = 135;
+  cvSections.forEach(([heading, lines]) => {
+    c2.fillStyle = '#222222';
+    c2.font = 'bold 18px Georgia, serif';
+    c2.fillText(heading, 40, cy);
+    cy += 26;
+    c2.fillStyle = '#444444';
+    c2.font = '15px system-ui, sans-serif';
+    lines.forEach((l) => { c2.fillText('\u2022 ' + l, 52, cy); cy += 22; });
+    cy += 18;
+  });
+  const cvTex = new THREE.CanvasTexture(cvCanvas);
+
+  // Folder root (shifts sideways when open so the spread stays centred)
+  const W = 2.6, H = 3.4, T = 0.34;
+  const folder = new THREE.Group();
+  scene.add(folder);
+
+  // Back board with inside right-hand page
+  const backGroup = new THREE.Group();
+  folder.add(backGroup);
+  const backBoard = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.1), leather);
+  backBoard.position.z = -0.12;
+  backGroup.add(backBoard);
+  const backInset = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, H - 0.3, 0.03), leatherDark);
+  backInset.position.z = -0.06;
+  backGroup.add(backInset);
+  const cvSheet = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.62), new THREE.MeshStandardMaterial({ map: cvTex, roughness: 0.8 }));
+  cvSheet.position.set(0.2, 0.4, -0.04);
+  backGroup.add(cvSheet);
+  const sleeve = new THREE.Mesh(new THREE.PlaneGeometry(1.26, 1.68), sleeveMat);
+  sleeve.position.set(0.2, 0.4, -0.035);
+  backGroup.add(sleeve);
+  const notesPocket = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.02), leatherDark);
+  notesPocket.position.set(0.75, -0.95, -0.04);
+  backGroup.add(notesPocket);
+
+  // Spine with binder rings
+  const spine = new THREE.Mesh(new THREE.BoxGeometry(0.14, H, T), leatherDark);
+  spine.position.set(-W / 2, 0, 0);
+  folder.add(spine);
+  [1.0, 0, -1.0].forEach((y) => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.022, 8, 32), metal);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.set(-W / 2, y, 0);
+    folder.add(ring);
+  });
+
+  // Front cover, hinged on the spine
+  const pivot = new THREE.Group();
+  pivot.position.set(-W / 2, 0, 0);
+  folder.add(pivot);
+  const frontGroup = new THREE.Group();
+  frontGroup.position.set(W / 2, 0, 0);
+  pivot.add(frontGroup);
+
+  const cover = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.1), leather);
+  cover.position.z = 0.12;
+  frontGroup.add(cover);
+
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, H - 0.3, 0.03), leatherDark);
+  panel.position.z = T / 2 + 0.015;
+  frontGroup.add(panel);
+
+  // Zip seam around the cover edges
+  const hw = W / 2 + 0.01, hh = H / 2 + 0.01;
+  const zipCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-hw, hh, 0.12),
+    new THREE.Vector3(hw, hh, 0.12),
+    new THREE.Vector3(hw, -hh, 0.12),
+    new THREE.Vector3(-hw, -hh, 0.12)
+  ], true);
+  frontGroup.add(new THREE.Mesh(new THREE.TubeGeometry(zipCurve, 200, 0.035, 8, true), zipMat));
+
+  // Carry handle on top
+  const handleCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.5, H / 2, 0.12),
+    new THREE.Vector3(-0.35, H / 2 + 0.4, 0.12),
+    new THREE.Vector3(0.35, H / 2 + 0.4, 0.12),
+    new THREE.Vector3(0.5, H / 2, 0.12)
+  ]);
+  frontGroup.add(new THREE.Mesh(new THREE.TubeGeometry(handleCurve, 40, 0.07, 10, false), leather));
+
+  // Brand card on the outside
+  const cardFrame = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.68, 0.02), leatherDark);
+  cardFrame.position.set(-0.5, -0.55, T / 2 + 0.04);
+  frontGroup.add(cardFrame);
+  const card = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.9, 0.58),
+    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.4 })
+  );
+  card.position.set(-0.5, -0.55, T / 2 + 0.065);
+  frontGroup.add(card);
+
+  // Zip pocket on the outside front
+  const pocket = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2.4, 0.02), leatherDark);
+  pocket.position.set(0.8, 0, T / 2 + 0.02);
+  frontGroup.add(pocket);
+  const zipBar = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.2, 0.03), zipMat);
+  zipBar.position.set(0.8, 0, T / 2 + 0.035);
+  frontGroup.add(zipBar);
+  const pull = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.04), metal);
+  pull.position.set(0.8, 0.95, T / 2 + 0.06);
+  frontGroup.add(pull);
+
+  // Inside of the cover (visible when opened)
+  const insideZip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.4, 0.03), zipMat);
+  insideZip.position.set(-1.0, 0, 0.05);
+  frontGroup.add(insideZip);
+  const insideZipPocket = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.5, 0.02), leatherDark);
+  insideZipPocket.position.set(-0.78, 0, 0.04);
+  frontGroup.add(insideZipPocket);
+  for (let i = 0; i < 4; i++) {
+    const slot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.7, 0.03), leatherDark);
+    slot.position.set(-0.3 + i * 0.18, 1.0, 0.05);
+    frontGroup.add(slot);
+  }
+  const idWindow = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.5, 0.32),
+    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.2 })
+  );
+  idWindow.rotation.y = Math.PI;
+  idWindow.position.set(0.6, 1.0, 0.056);
+  frontGroup.add(idWindow);
+  const snapPocket = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.2, 0.02), leatherDark);
+  snapPocket.position.set(0.2, -0.6, 0.05);
+  frontGroup.add(snapPocket);
+
+  // Floating rating stars (4 gold, 1 empty)
+  function makeStarShape(outer = 1, inner = 0.45, points = 5) {
+    const s = new THREE.Shape();
+    for (let i = 0; i < points * 2; i++) {
+      const r = i % 2 === 0 ? outer : inner;
+      const a = Math.PI / 2 + (i * Math.PI) / points;
+      const x = Math.cos(a) * r, y = Math.sin(a) * r;
+      if (i === 0) s.moveTo(x, y); else s.lineTo(x, y);
+    }
+    s.closePath();
+    return s;
+  }
+  const starGeo = new THREE.ExtrudeGeometry(makeStarShape(), {
+    depth: 0.12, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 3
+  });
+  starGeo.center();
+  const starsGroup = new THREE.Group();
+  scene.add(starsGroup);
+  const stars = [];
+  for (let i = 0; i < 5; i++) {
+    const mesh = new THREE.Mesh(starGeo, i < 4 ? goldMat : emptyMat);
+    mesh.scale.setScalar(0.2);
+    mesh.position.set((i - 2) * 0.5, -2.35, 0);
+    starsGroup.add(mesh);
+    stars.push(mesh);
+  }
+
+  // Views
+  const VIEWS = {
+    front:    { ry: 0,            rx: 0,           open: false, cam: 9.2,  text: 'Front view' },
+    back:     { ry: Math.PI,      rx: 0,           open: false, cam: 9.2,  text: 'Back view' },
+    left:     { ry: Math.PI / 2,  rx: 0,           open: false, cam: 9.2,  text: 'Left side view (spine)' },
+    right:    { ry: -Math.PI / 2, rx: 0,           open: false, cam: 9.2,  text: 'Right side view' },
+    top:      { ry: 0,            rx: Math.PI / 2, open: false, cam: 9.2,  text: 'Top view (handle edge)' },
+    inside:   { ry: 0,            rx: 0,           open: true,  cam: 12.6, text: 'Inside view: cover opened' },
+    surround: { ry: null,         rx: 0,           open: false, cam: 9.2,  text: 'Surround view: spinning 360\u00B0', auto: true }
+  };
+
+  let viewName = 'front';
+  let auto = false;
+  let tY = 0, cY = 0, tX = 0, cX = 0;
+  let openT = 0, openCur = 0;
+  let camTarget = 9.2;
+
+  function setView(name) {
+    const v = VIEWS[name];
+    if (!v) return;
+    viewName = name;
+    auto = !!v.auto;
+    if (v.ry !== null) {
+      // rotate the shortest way round
+      tY += Math.atan2(Math.sin(v.ry - tY), Math.cos(v.ry - tY));
+    }
+    tX = v.rx;
+    openT = v.open ? Math.PI : 0;
+    camTarget = v.cam;
+    caption.textContent = v.text;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === name)));
+  }
+
+  buttons.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
+
+  // Sizing
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Drag to rotate
+  let dragging = false, lastX = 0;
+  const el = renderer.domElement;
+  el.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    lastX = e.clientX;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    tY += (e.clientX - lastX) * 0.01;
+    lastX = e.clientX;
+  });
+  const stop = () => { dragging = false; };
+  el.addEventListener('pointerup', stop);
+  el.addEventListener('pointercancel', stop);
+  el.addEventListener('dblclick', () => setView(viewName === 'inside' ? 'front' : 'inside'));
+
+  // Animate
+  const clock = new THREE.Clock();
+  function animate() {
+    const t = clock.getElapsedTime();
+    if (auto && !dragging) tY += 0.01;
+
+    cY += (tY - cY) * 0.08;
+    cX += (tX - cX) * 0.08;
+    folder.rotation.y = cY;
+    folder.rotation.x = cX + (viewName === 'front' || viewName === 'surround' ? Math.sin(t * 0.8) * 0.02 : 0);
+    folder.position.y = Math.sin(t * 1.2) * 0.04;
+
+    openCur += (openT - openCur) * 0.06;
+    pivot.rotation.y = openCur;
+    folder.position.x += ((openT > 0.5 ? W / 2 : 0) - folder.position.x) * 0.06;
+
+    camera.position.z += (camTarget - camera.position.z) * 0.07;
+
+    stars.forEach((s, i) => {
+      s.rotation.y = t * 0.8 + i * 0.6;
+      s.position.y = -2.35 + Math.sin(t * 2 + i) * 0.04;
+    });
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+
+  setView('front');
+  animate();
+
+  // Animate the review bars in
+  setTimeout(() => {
+    document.querySelectorAll('.fill').forEach((f) => { f.style.width = f.dataset.w; });
+  }, 200);
+})();
+</script>
+</body>
+</html>
